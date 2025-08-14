@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="en" data-theme="system">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Dashboard • CSS Grid + Theme Switch</title>
+  <style>
+    /* ------------------------------
+       THEME TOKENS (CSS VARIABLES)
+       ------------------------------ */
+    :root {
+      /* base (light) */
+      --bg: #f7f7fb;
+      --panel: #ffffff;
+      --text: #16181d;
+      --muted: #6b7280;
+      --primary: #4f46e5;
+      --primary-contrast: #ffffff;
+      --border: #e5e7eb;
+      --accent: #14b8a6;
+      --warn: #ea580c;
+      --ok: #16a34a;
+      --shadow: 0 10px 25px rgba(0,0,0,.06);
+      --radius: 16px;
+    }
+
+    /* dark theme */
+    html[data-theme="dark"] {
+      --bg: #0b0e14;
+      --panel: #121725;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --primary: #8b5cf6;
+      --primary-contrast: #0b0e14;
+      --border: #1f2937;
+      --accent: #22d3ee;
+      --warn: #fb923c;
+      --ok: #34d399;
+      --shadow: 0 10px 25px rgba(0,0,0,.35);
+    }
+
+    /* respect system when data-theme="system" */
+    @media (prefers-color-scheme: dark) {
+      html[data-theme="system"] {
+        --bg: #0b0e14;
+        --panel: #121725;
+        --text: #e5e7eb;
+        --muted: #9ca3af;
+        --primary: #8b5cf6;
+        --primary-contrast: #0b0e14;
+        --border: #1f2937;
+        --accent: #22d3ee;
+        --warn: #fb923c;
+        --ok: #34d399;
+        --shadow: 0 10px 25px rgba(0,0,0,.35);
+      }
+    }
+
+    /* ------------------------------
+       RESET & BASE
+       ------------------------------ */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font: 14px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text);
+      background: var(--bg);
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+
+    /* ------------------------------
+       APP GRID LAYOUT
+       ------------------------------ */
+    .app {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      grid-template-rows: 64px 1fr;
+      grid-template-areas:
+        "sidebar header"
+        "sidebar main";
+      min-height: 100dvh;
+    }
+
+    header {
+      grid-area: header;
+      display: flex; align-items: center; gap: 12px;
+      justify-content: space-between;
+      padding: 0 16px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 5;
+    }
+
+    .sidebar {
+      grid-area: sidebar;
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      padding: 16px 12px;
+      position: sticky; top: 0; height: 100dvh;
+      overflow-y: auto;
+    }
+
+    main {
+      grid-area: main;
+      padding: 20px;
+    }
+
+    /* ------------------------------
+       HEADER
+       ------------------------------ */
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .logo {
+      width: 34px; height: 34px; border-radius: 9px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      box-shadow: var(--shadow);
+    }
+    .title { font-weight: 700; letter-spacing: .2px; }
+
+    .header-actions { display: flex; align-items: center; gap: 10px; }
+    .icon-btn {
+      display: inline-grid; place-items: center;
+      width: 38px; height: 38px; border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      cursor: pointer;
+    }
+
+    /* Theme switcher */
+    .theme-select {
+      display: inline-flex;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+    .theme-select button {
+      padding: 8px 12px; border: 0; background: transparent; cursor: pointer;
+    }
+    .theme-select button[aria-pressed="true"] { background: var(--primary); color: var(--primary-contrast); }
+
+    /* ------------------------------
+       SIDEBAR NAV
+       ------------------------------ */
+    .nav {
+      display: grid; gap: 6px; margin-top: 8px;
+    }
+    .nav a {
+      padding: 10px 12px; border-radius: 12px; border: 1px solid transparent;
+      display: grid; grid-template-columns: 22px 1fr auto; align-items: center; gap: 10px;
+      color: var(--muted);
+    }
+    .nav a.active, .nav a:hover {
+      color: var(--text); background: var(--panel);
+      border-color: var(--border);
+      box-shadow: var(--shadow);
+    }
+    .sidebar .section-label { margin: 12px 8px 6px; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+
+    .sidebar .mini {
+      display: none;
+    }
+
+    /* Collapse on small screens */
+    @media (max-width: 900px) {
+      .app {
+        grid-template-columns: 1fr;
+        grid-template-rows: 64px auto 1fr;
+        grid-template-areas:
+          "header"
+          "sidebar"
+          "main";
+      }
+      .sidebar { position: relative; height: auto; }
+      .sidebar .full { display: none; }
+      .sidebar .mini { display: flex; gap: 8px; flex-wrap: wrap; }
+      .sidebar .mini a { border: 1px solid var(--border); padding: 8px 10px; border-radius: 999px; }
+    }
+
+    /* ------------------------------
+       MAIN CONTENT
+       ------------------------------ */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+
+    .kpi { display: grid; gap: 4px; }
+    .kpi .label { color: var(--muted); font-size: 12px; }
+    .kpi .value { font-size: 28px; font-weight: 800; letter-spacing: .2px; }
+    .kpi .delta { font-size: 12px; }
+    .up { color: var(--ok); }
+    .down { color: var(--warn); }
+
+    .card h3 { margin: 0 0 12px; font-size: 16px; }
+
+    /* responsive card spans */
+    .col-3 { grid-column: span 3; }
+    .col-4 { grid-column: span 4; }
+    .col-5 { grid-column: span 5; }
+    .col-6 { grid-column: span 6; }
+    .col-7 { grid-column: span 7; }
+    .col-8 { grid-column: span 8; }
+    .col-12 { grid-column: span 12; }
+
+    @media (max-width: 900px) {
+      .col-3, .col-4, .col-5, .col-6, .col-7, .col-8 { grid-column: span 12; }
+    }
+
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px 8px; border-bottom: 1px solid var(--border); text-align: left; }
+    th { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+    tr:hover td { background: color-mix(in oklab, var(--panel), var(--text) 3%); }
+
+    .badge { padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border); font-size: 12px; }
+
+    .actions { display: flex; gap: 8px; }
+    .btn {
+      padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--panel);
+      cursor: pointer; box-shadow: var(--shadow);
+    }
+    .btn.primary { background: var(--primary); border-color: color-mix(in oklab, var(--primary), black 10%); color: var(--primary-contrast); }
+
+    /* simple sparkline */
+    .sparkline { height: 60px; width: 100%; display: block; }
+
+    /* footer */
+    .footer { margin-top: 20px; color: var(--muted); font-size: 12px; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" aria-label="Sidebar Navigation">
+      <div class="section-label">Menu</div>
+      <nav class="nav full">
+        <a class="active" href="#overview" aria-current="page">📊 <span>Overview</span> <small class="badge">Live</small></a>
+        <a href="#orders">🧾 <span>Orders</span> <span></span></a>
+        <a href="#customers">👥 <span>Customers</span> <span></span></a>
+        <a href="#products">📦 <span>Products</span> <span></span></a>
+        <a href="#reports">📈 <span>Reports</span> <span></span></a>
+        <a href="#settings">⚙️ <span>Settings</span> <span></span></a>
+      </nav>
+      <nav class="nav mini" aria-label="Quick Nav">
+        <a class="active" href="#overview">Overview</a>
+        <a href="#orders">Orders</a>
+        <a href="#customers">Customers</a>
+        <a href="#products">Products</a>
+        <a href="#reports">Reports</a>
+        <a href="#settings">Settings</a>
+      </nav>
+    </aside>
+
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <div class="title">Acme Admin</div>
+          <div style="font-size:12px; color:var(--muted);">CSS Grid • Theme Switch</div>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <div class="theme-select" role="group" aria-label="Theme selection">
+          <button id="theme-system" data-theme="system" aria-pressed="true" title="Use system theme">System</button>
+          <button id="theme-light" data-theme="light" aria-pressed="false" title="Light theme">Light</button>
+          <button id="theme-dark" data-theme="dark" aria-pressed="false" title="Dark theme">Dark</button>
+        </div>
+        <button class="icon-btn" id="notif" aria-label="Notifications" title="Notifications">🔔</button>
+        <button class="icon-btn" aria-label="User menu" title="User">🙍‍♂️</button>
+      </div>
+    </header>
+
+    <main>
+      <!-- KPIs -->
+      <section class="grid" aria-label="Key metrics">
+        <div class="card col-3 kpi">
+          <div class="label">Revenue</div>
+          <div class="value">₹12.4L</div>
+          <div class="delta up">▲ 8.2% vs last week</div>
+        </div>
+        <div class="card col-3 kpi">
+          <div class="label">Orders</div>
+          <div class="value">1,284</div>
+          <div class="delta up">▲ 2.1% today</div>
+        </div>
+        <div class="card col-3 kpi">
+          <div class="label">Refunds</div>
+          <div class="value">27</div>
+          <div class="delta down">▼ 0.6% this month</div>
+        </div>
+        <div class="card col-3 kpi">
+          <div class="label">Uptime</div>
+          <div class="value">99.98%</div>
+          <div class="delta up">▲ +0.02% SLA</div>
+        </div>
+
+        <!-- Charts (SVG placeholders) -->
+        <div class="card col-8">
+          <h3>Sales (Last 7 days)</h3>
+          <svg class="sparkline" viewBox="0 0 100 20" preserveAspectRatio="none" aria-label="Sales sparkline">
+            <polyline fill="none" stroke="currentColor" stroke-width="1.5"
+              points="0,15 10,12 20,13 30,10 40,8 50,12 60,9 70,6 80,7 90,4 100,5" />
+          </svg>
+        </div>
+        <div class="card col-4">
+          <h3>Conversion</h3>
+          <div style="display:grid; grid-template-columns:1fr auto; gap:6px; align-items:center;">
+            <div class="badge">Landing</div><div>34.2k</div>
+            <div class="badge">Signups</div><div>2.6k</div>
+            <div class="badge">Purchases</div><div>1.1k</div>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="card col-12">
+          <h3>Recent Orders</h3>
+          <div style="overflow:auto;">
+            <table role="table" aria-label="Recent orders">
+              <thead>
+                <tr>
+                  <th>Order #</th>
+                  <th>Customer</th>
+                  <th>Status</th>
+                  <th>Total</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>#9841</td>
+                  <td>Aarav Patel</td>
+                  <td><span class="badge" style="border-color:var(--ok);">Paid</span></td>
+                  <td>₹4,599</td>
+                  <td>Aug 12, 2025</td>
+                  <td class="actions">
+                    <button class="btn">View</button>
+                    <button class="btn primary">Refund</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>#9839</td>
+                  <td>Ananya Gupta</td>
+                  <td><span class="badge" style="border-color:var(--warn);">Pending</span></td>
+                  <td>₹2,199</td>
+                  <td>Aug 12, 2025</td>
+                  <td class="actions">
+                    <button class="btn">View</button>
+                    <button class="btn primary">Capture</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>#9832</td>
+                  <td>Rohit Sharma</td>
+                  <td><span class="badge">Failed</span></td>
+                  <td>₹1,299</td>
+                  <td>Aug 11, 2025</td>
+                  <td class="actions">
+                    <button class="btn">Retry</button>
+                    <button class="btn primary">Details</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>#9822</td>
+                  <td>Neha Verma</td>
+                  <td><span class="badge" style="border-color:var(--ok);">Paid</span></td>
+                  <td>₹9,999</td>
+                  <td>Aug 10, 2025</td>
+                  <td class="actions">
+                    <button class="btn">View</button>
+                    <button class="btn primary">Invoice</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Secondary widgets -->
+        <div class="card col-6">
+          <h3>Traffic Sources</h3>
+          <div style="display:grid; gap:8px;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div class="badge" style="min-width:90px; text-align:center;">Organic</div>
+              <progress max="100" value="62" style="width:100%"></progress>
+              <div>62%</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div class="badge" style="min-width:90px; text-align:center;">Paid</div>
+              <progress max="100" value="21" style="width:100%"></progress>
+              <div>21%</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div class="badge" style="min-width:90px; text-align:center;">Referral</div>
+              <progress max="100" value="9" style="width:100%"></progress>
+              <div>9%</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div class="badge" style="min-width:90px; text-align:center;">Email</div>
+              <progress max="100" value="8" style="width:100%"></progress>
+              <div>8%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card col-6">
+          <h3>Announcements</h3>
+          <ul style="margin:0; padding-left:18px; line-height:1.8;">
+            <li>New dashboard widgets API is now in beta.</li>
+            <li>We added bulk actions to Orders and Customers pages.</li>
+            <li>Expect maintenance on Sunday, 02:00–03:00 IST.</li>
+          </ul>
+        </div>
+      </section>
+
+      <div class="footer">Built with pure HTML, CSS Grid, and a tiny bit of JS. Theme selection persists with localStorage.</div>
+    </main>
+  </div>
+
+  <script>
+    // ------------------------------
+    // Theme persistence + switching
+    // ------------------------------
+    (function() {
+      const key = 'dashboard-theme';
+      const root = document.documentElement;
+      const buttons = Array.from(document.querySelectorAll('.theme-select button'));
+
+      function setTheme(theme) {
+        root.setAttribute('data-theme', theme);
+        localStorage.setItem(key, theme);
+        buttons.forEach(btn => btn.setAttribute('aria-pressed', String(btn.dataset.theme === theme)));
+      }
+
+      // load saved
+      const saved = localStorage.getItem(key) || 'system';
+      setTheme(saved);
+
+      // events
+      buttons.forEach(btn => btn.addEventListener('click', () => setTheme(btn.dataset.theme)));
+
+      // Optional: live-follow system changes when in system mode
+      const media = window.matchMedia('(prefers-color-scheme: dark)');
+      media.addEventListener?.('change', () => {
+        if ((localStorage.getItem(key) || 'system') === 'system') {
+          setTheme('system');
+        }
+      });
+
+      // tiny demo interaction
+      document.getElementById('notif').addEventListener('click', () => {
+        alert('No new notifications right now.');
+      });
+    })();
+  </script>
+</body>
+</html>
