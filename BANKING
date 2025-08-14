@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Student Registration Form</title>
+  <style>
+    :root { --bg:#f7f7fb; --card:#fff; --text:#222; --accent:#2563eb; }
+    * { box-sizing:border-box; }
+    body {
+      margin:0; font-family:system-ui, Arial, sans-serif; color:var(--text);
+      background:var(--bg); display:grid; place-items:center; min-height:100svh; padding:24px;
+    }
+    .card {
+      background:var(--card); width:100%; max-width:420px; padding:24px 22px;
+      border-radius:16px; box-shadow:0 6px 24px rgba(0,0,0,.08);
+    }
+    h1 { margin:0 0 8px; font-size:1.4rem; }
+    p.sub { margin:0 0 18px; color:#666; font-size:.94rem; }
+    label { display:block; font-weight:600; margin:12px 0 6px; }
+    input {
+      width:100%; padding:10px 12px; border:1px solid #d9d9e3; border-radius:8px; font-size:1rem;
+    }
+    input:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(37,99,235,.15); }
+    .hint { font-size:.82rem; color:#666; margin-top:6px; }
+    button {
+      margin-top:16px; width:100%; padding:12px 14px; border:0; border-radius:10px;
+      background:var(--accent); color:#fff; font-weight:700; cursor:pointer; font-size:1rem;
+    }
+    button:hover { filter:brightness(.95); }
+    .fine { font-size:.8rem; color:#666; margin-top:10px; }
+  </style>
+</head>
+<body>
+  <main class="card" role="main" aria-labelledby="title">
+    <h1 id="title">Student Registration</h1>
+    <p class="sub">Please fill all required fields.</p>
+
+    <!-- Note: On GitHub Pages, this will not actually submit anywhere (static site). -->
+    <form id="registrationForm" action="" method="post" novalidate>
+      <!-- Full Name: letters, spaces, apostrophes, and hyphens -->
+      <label for="name">Full Name *</label>
+      <input
+        id="name"
+        name="name"
+        type="text"
+        inputmode="text"
+        autocomplete="name"
+        placeholder="e.g., Deepak Kumar"
+        pattern="^[A-Za-z][A-Za-z\s'-]{1,48}[A-Za-z]$"
+        title="Use letters, spaces, apostrophes, or hyphens (2–50 chars)."
+        required
+      />
+      <div class="hint">Only letters, spaces, ' and - (2–50 characters).</div>
+
+      <!-- Email -->
+      <label for="email">Email *</label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        inputmode="email"
+        autocomplete="email"
+        placeholder="you@example.com"
+        required
+      />
+
+      <!-- Age: 10–100 -->
+      <label for="age">Age *</label>
+      <input
+        id="age"
+        name="age"
+        type="number"
+        inputmode="numeric"
+        placeholder="e.g., 20"
+        min="10"
+        max="100"
+        required
+      />
+      <div class="hint">Enter a number between 10 and 100.</div>
+
+      <button type="submit">Register</button>
+      <p class="fine">* Required fields</p>
+    </form>
+  </main>
+
+  <script>
+    // Keep native HTML5 validation UI, but prevent real submission on a static site.
+    const form = document.getElementById('registrationForm');
+    form.addEventListener('submit', (e) => {
+      if (!form.checkValidity()) {
+        // Let the browser show its built-in messages
+        return;
+      }
+      e.preventDefault();
+      alert('Form validated! (On GitHub Pages this is a demo — no backend to receive data.)');
+    });
+  </script>
+</body>
+</html>
